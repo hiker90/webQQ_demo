@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>模拟 Web QQ</title>
+	<style>
+		/*reset*/
+		div, ul, li, input, span, a{
+			margin: 0;
+			padding: 0;
+		}
+		li{
+			list-style: none;
+		}
+		a{
+			text-decoration: none;
+			color: #000;
+		}
+		a:hover{
+			color: #2E5CFF;
+		}
+		input{
+			border: none;
+		}
+		body{
+			font:14px/1.2 arial,Microsoft Yahei,sans-serif;
+		}
+		/*main*/
+		#container{
+			position: relative;
+			left:300px;
+			top: 200px;
+			width: 380px;
+			height: 247px;
+			background-color: #f6f6f6;
+			border: 1px solid #ccc;
+			border-radius: 20px;
+			-webkit-box-shadow: 0 0 10px #aaa;
+			box-shadow: 0 0 10px #aaa;
+		}
+		/*关闭按钮*/
+		#close_btn{
+			z-index: 1000;
+			display: block;
+			position: absolute;
+			right: 8px;
+			top: 8px;
+			width: 24px;
+			height: 24px;
+			background: url('images/boxy_btn.png') no-repeat -2px -2px;
+			border-radius: 12px;
+		}
+		#close_btn:hover{
+			-webkit-box-shadow: 0 0 5px #2E5CFF;
+			box-shadow: 0 0 5px #2E5CFF;
+		}
+		/*标题*/
+		#logo{
+			margin: 20px auto 0;
+			width:200px;
+			height: 44px;
+			background: url('images/login_window_logo.png') no-repeat -200px 0;
+		}
+		/*输入区 表单*/
+		#submit{
+			margin:10px auto;
+			width: 280px;
+			height: 105px;
+		}
+		#submit> .qq_id, #submit> .password, #submit> .code{
+			margin-top: 5px;
+			height: 30px;
+		}
+		#submit> div> label{
+			display: inline-block;
+			width: 60px;
+			height: 18px;
+			margin-right: 10px;
+			background: url('images/login_btn.png');
+			vertical-align: middle;
+		}
+		#submit .qq_id>label{
+			background-position: 0px -40px;
+		}
+		#submit .password>label{
+			background-position: -60px -40px;
+		}
+		#submit .code>label{
+			background-position: -120px -40px;
+		}
+		#submit> div> input{
+			display: inline-block;
+			width: 180px;
+			height: 27px;
+			padding: 0 10px;
+			border:1px solid #aaa;
+			border-radius: 5px;
+			vertical-align: middle;
+			line-height: 27px;
+		}
+		#submit> div> input:focus{
+			border: 1px solid transparent;
+			-webkit-box-shadow: 0 0 6px #2E5CFF;
+			box-shadow: 0 0 6px #2E5CFF;
+		}
+		#submit #showpsd{
+			display: inline-block;
+			width:20px;
+			height:18px;
+			margin-left:-24px;
+			background-image: url('images/ptlogin.png');
+			background-repeat: no-repeat;
+			background-position: -40px -20px;
+			vertical-align: middle;
+		}
+		#submit .password> input{
+			width: 170px;
+			padding-right: 20px;
+		}
+		#submit .code> input{
+			width: 40px;
+		}
+		#code{
+			display: inline-block;
+			width: 78px;
+			height: 27px;
+			margin-left: 6px;
+			border: 1px solid #666;
+			background: url('images/checknode.png');
+			vertical-align: middle;
+		}
+		#submit .btn{
+			display: block;
+			float: left;
+			width: 103px;
+			height: 30px;
+			margin: 10px 16px 0 0;
+			background: url('images/login_btn.png') no-repeat;
+			border-radius: 4px;
+			-webkit-box-shadow: 0 0 2px #333;
+			box-shadow: 0 0 2px #333;
+			text-indent: 9999px;
+		}
+		#submit #btn1{
+			background-position:  -115px -4px;
+		}
+		#submit #btn2{
+			background-position:  -3px -3px;
+		}
+		#state{
+			float: left;
+			position: relative;
+			margin-top: 10px;
+		}
+		#state .state{
+			display: inline-block;
+			width: 14px;
+			height: 14px;
+			background: url('images/ptlogin.png') no-repeat;
+		}
+		#state .triangle{
+			display: inline-block;
+			margin-top: 11px;
+			margin-left:5px;
+			width:14px;
+			height:14px;
+			background-image: url('images/ptlogin.png');
+			background-repeat: no-repeat;
+			background-position: -14px -17px;
+		}
+		#state #submenu{
+			display:none;
+			position: absolute;
+			bottom:-170px;
+			left: -4px;
+			width: 100px;
+			border: 1px solid #aaa;
+			background:#FFF;
+		}
+		#submenu li{
+			height: 24px;
+			line-height: 24px;
+		}
+		#submenu li:hover{
+			background-color: #307033;
+		}
+		#state .icon{
+			display: inline-block;
+			background: url('images/ptlogin.png') no-repeat;
+			width: 14px;
+			height: 14px;
+			margin: 0 4px;
+			vertical-align: text-bottom;
+		}
+		#state .online, #online> .icon{
+			background-position: 0 0;
+		}
+		#state .busy, #busy> .icon{
+			background-position: -18px 0;
+		}
+		#state .left, #left> .icon{
+			background-position: -36px 0;
+		}
+		#state .hidden, #hidden> .icon{
+			background-position: -54px 0;
+		}
+		#state .Qme, #Qme> .icon{
+			background-position: -72px 0;
+		}
+		#state .offline, #offline> .icon{
+			background-position: -90px 0;
+		}
+		#state .silent, #silent> .icon{
+			background-position: -108px 0;
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<!-- 关闭按钮 -->
+		<a href="#" id="close_btn"></a>
+		<!-- 标题 -->
+		<div id="logo"></div>
+		<!-- 输入区 -->
+		<form action="" id="submit" method="post">
+			<div class="qq_id">
+				<label for="qq_id"></label>
+				<input type="text" placeholder="请输入QQ号码" id="qq_id">
+			</div>
+			<div class='password'>
+				<label for="password"></label>
+				<input type="password" placeholder="请输入密码" id="password">
+				<a href="" id="showpsd" title="显示/隐藏"></a>
+			</div>
+			<div class='code'>
+				<label for="code"></label>
+				<input type="text">
+				<a href=""><span id="code"></span> 换一张</a>
+			</div>
+			<!-- 按钮区 -->
+			<input type="button" value="登录" class="btn" id="btn1">
+			<input type="button" value="注册" class="btn" id="btn2">
+			<!-- 登录状态 -->
+			<div id="state">
+				<span class="state online"></span>
+				<span class="triangle"></span>
+				<ul id="submenu">
+					<li class="state_list" id="online"><span class="icon"></span>我在线上</li>
+					<li class="state_list" id="busy"><span class="icon"></span>忙碌</li>
+					<li class="state_list" id="left"><span class="icon"></span>离开</li>
+					<li class="state_list" id="hidden"><span class="icon"></span>隐身</li>
+					<li class="state_list" id="Qme"><span class="icon"></span>Q我吧</li>
+					<li class="state_list" id="offline"><span class="icon"></span>离线</li>
+					<li class="state_list" id="silent"><span class="icon"></span>请勿打扰</li>
+				</ul>
+			</div>
+		</form>
+	</div>
+	<script>
+		window.onload = function(){
+			// 关闭面板
+			var con = document.getElementById('container');
+			var close = document.getElementById('close_btn');
+			close.onclick = function(e){
+				var oEvent = e || window.event;
+				if(oEvent.stopPropagation){
+					oEvent.stopPropagation();
+				}else{
+					oEvent.cancelBubble=true;
+				};
+				con.style.display = "none";
+				return false;
+			}
+			// 密码明文
+			var showPsd = document.getElementById('showpsd');
+			var psw = document.getElementById('password');
+			showPsd.onclick = function(){
+				var pswType = psw.type;
+				if(pswType == "password"){
+					psw.type = "text";
+					this.style.backgroundPosition = "-60px -20px";
+				}else{
+					psw.type = "password";
+					this.style.backgroundPosition = "-40px -20px";
+				}
+				return false;
+			}
+			// 状态菜单
+			var state = document.getElementById('state');
+			state.onclick = function(e){
+				var oEvent = e || window.event;
+				if(oEvent.stopPropagation){
+					oEvent.stopPropagation();
+				}else{
+					oEvent.cancelBubble=true;
+				};
+				showMenu();
+			}
+			document.onclick = function(){
+				closeMenu();
+			}
+			var stateLi = getByClass('state_list','state');
+			for(var i=0; i<stateLi.length; i++){
+				stateLi[i].onclick = function(e){
+					var oEvent = e || window.event;
+					if(oEvent.stopPropagation){
+						oEvent.stopPropagation();
+					}else{
+						oEvent.cancelBubble=true;
+					};
+					closeMenu();
+					var curState = getByClass('state','state')[0];
+					curState.className = "state " + this.id;
+				}
+			}
+			// 按钮的点击效果
+			var btn = getByClass('btn','submit');
+			for(var i=0;i<btn.length;i++){
+				btn[i].onmousedown = function(e){
+					this.style.boxShadow = "0 0 2px #333 inset";
+				}
+				btn[i].onmouseup = function(){
+					this.style.boxShadow = "0 0 2px #333";
+				}
+			}
+			// 面板拖拽
+			var logo = document.getElementById('logo');
+			logo.onmousedown = function(e){
+				var disX,disY;
+				var l,t;
+				var docScrT = document.documentElement.scrollTop||document.body.scrollTop;
+				var docScrL = document.documentElement.scrollLeft||document.body.scrollLeft;
+				disX = e.clientX + docScrL - con.offsetLeft;
+				disY = e.clientY + docScrT - con.offsetTop;
+				document.onmousemove = function(e){
+
+					l = e.clientX - disX;
+					t = e.clientY - disY;
+					if (e.clientX <= disX + 20){
+						l = 5;
+					}else if(e.clientX >= document.documentElement.clientWidth - con.offsetWidth + disX -20){
+						l = document.documentElement.clientWidth - con.offsetWidth - 20;
+					}
+					if (e.clientY <= disY + 20){
+						t = 5;
+					}else if(e.clientY >= document.documentElement.clientHeight - con.offsetHeight + disY -20){
+						t = document.documentElement.clientHeight - con.offsetHeight - 20;
+					}
+					con.style.left =  l + "px";
+					con.style.top =  t + "px";
+				}
+				document.onmouseup = function(e){
+					document.onmousemove = null;
+					document.onmouseup = null;
+				}
+				return false;
+			}
+			// 表单验证
+			var qqId = document.getElementById('qq_id');
+			var reg = /^[0-9]{6,10}$/;
+			qqId.onblur = function(){
+				if(!reg.test(this.value.trim())){
+					alert("请输入6~10位qq号码");
+				}
+			}
+		}
+		// 自定义getElementsByClass函数
+		function getByClass(cls,parentsId){
+			var result = [];
+			var temp = [];
+			if(parentsId){
+				var parents = document.getElementById(parentsId);
+				temp = parents.getElementsByTagName('*');
+			}else{
+				temp = document.getElementsByTagName('*');
+			}
+			for(var i=0;i<temp.length;i++){
+				var name = temp[i].className.split(' ');
+				for(var j=0; j<name.length; j++){
+					if(name[j] == cls){
+						result.push(temp[i]);
+						break;
+					}
+				}
+			}
+			return result;
+		}
+		// 登录状态菜单的打开关闭
+		function closeMenu(){
+			var subMenu = document.getElementById('submenu');
+			var tri = getByClass('triangle')[0];
+			subMenu.style.display= "none";
+			tri.style.backgroundPosition = "-14px -17px";
+		}
+		function showMenu(){
+			var subMenu = document.getElementById('submenu');
+			var tri = getByClass('triangle')[0];
+			subMenu.style.display= "block";
+			tri.style.backgroundPosition = "2px -17px";
+		}
+	</script>
+</body>
+</html>
